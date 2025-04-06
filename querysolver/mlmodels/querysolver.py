@@ -1,5 +1,5 @@
 import google.generativeai as genai
-import os
+from django.conf import settings
 
 def answer_question_simple(question):
     """
@@ -14,7 +14,7 @@ def answer_question_simple(question):
     """
     try:
         # Configure the API
-        genai.configure(api_key="AIzaSyCXUeVSOWCS3lYCKz5h-qA5Qt5_6ixFbIY")
+        genai.configure(api_key=settings.GENAI_API_KEY)
 
         # Model generation configuration
         generation_config = {
