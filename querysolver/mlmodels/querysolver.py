@@ -1,7 +1,8 @@
 import google.generativeai as genai
-from django.conf import settings
 
-def answer_question_simple(question):
+
+
+def answer_question_simple(question, api_key):
     """
     Answers a given question using the Gemini API in simple language.
 
@@ -14,7 +15,7 @@ def answer_question_simple(question):
     """
     try:
         # Configure the API
-        genai.configure(api_key=settings.GENAI_API_KEY)
+        genai.configure(api_key=api_key)
 
         # Model generation configuration
         generation_config = {

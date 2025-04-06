@@ -1,4 +1,4 @@
-from urllib import response
+from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from .serializers import QuerySerializer
@@ -21,7 +21,7 @@ class QuerySolver(viewsets.ViewSet):
         
     
     def querySolver(self, query: str) -> str:
-        return answer_question_simple(query)
+        return answer_question_simple(query, settings.GENAI_API_KEY)
         # Write your code here
         # return " ".join(query.split()[::-1])
 
