@@ -2,3 +2,6 @@ childappbackenv/Lib/site-packages/
 childappbackenv/Scripts/
 childappbackenv/pyvenv.cfg
 childappbackenv/
+childappback/models/_pycache_
+childappback/models/Archive
+childappback/models/Class_9_Science_Chapter_1.pdf
