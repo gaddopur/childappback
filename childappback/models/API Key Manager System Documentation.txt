@@ -1,0 +1,209 @@
+API Key Manager System Documentation
+1. Overview
+The API Key Manager system provides:
+
+Secure API key storage and rotation
+
+Automatic failure tracking and key blocking
+
+CLI for key management
+
+JSON-based persistent storage
+
+Thread-safe operations
+
+2. Setup
+Requirements
+bash
+Copy
+pip install PyPDF2 google-generativeai python-dotenv
+File Structure
+Copy
+├── api_key_manager.py    # Core key management logic
+├── key_manager_cli.py    # Command-line interface
+├── api_keys.json         # API key storage (auto-generated)
+└── api_key_states.json   # Key status tracking (auto-generated)
+3. CLI Usage
+Starting the CLI
+bash
+Copy
+python key_manager_cli.py
+Menu Options
+Copy
+API Key Management Console
+1. Add new API Key
+2. List stored API Keys
+3. Remove API Key
+4. View Key Statuses
+5. Exit
+1. Adding Keys
+Keys are hidden during input
+
+Duplicate prevention
+
+Auto-saves to api_keys.json
+
+Example:
+
+Copy
+Enter your choice (1-5): 1
+Enter API key (input hidden): 
+Key added successfully! (Partial: AIza...YNQs)
+2. Listing Keys
+Shows masked keys
+
+Displays active/blocked status
+
+Example:
+
+Copy
+Stored API Keys:
+1. AIza...YNQs (Active)
+2. AIza...dD4X (Blocked)
+3. Removing Keys
+Select by number from list
+
+Confirmation through partial key display
+
+Example:
+
+Copy
+Enter key number to remove: 2
+Removed key: ...dD4X
+4. Key Statuses
+Failure counts
+
+Block expiration times
+
+Last failure timestamps
+
+Example:
+
+Copy
+Key AIza...YNQs:
+  Failures: 0
+  Blocked until: Thu Jan  1 00:00:00 1970
+  Last failed: Never
+4. API Manager Integration
+Initialization
+python
+Copy
+from api_key_manager import APIKeyManager
+
+# Load keys from api_keys.json
+manager = APIKeyManager()
+
+# Or provide keys directly
+manager = APIKeyManager(api_keys=["key1", "key2"])
+Key Retrieval
+python
+Copy
+key = manager.get_available_key()
+if key:
+    print(f"Using key: ...{key[-4:]}")
+else:
+    print("No available keys")
+Status Updates
+python
+Copy
+try:
+    # API call logic
+    manager.update_key_status(key, success=True)
+except Exception as e:
+    manager.update_key_status(key, success=False)
+5. File Management
+api_keys.json
+json
+Copy
+[
+  "AIzaSyDmG6cUWjZBIdYI5H1NDqdaYwZjMYmjFYY",
+  "AIzaSyCfFOnGjgd-ZXS0VgPQ-wejgWGQTXcMpVw"
+]
+api_key_states.json
+json
+Copy
+{
+  "AIzaSyDmG6cUWjZBIdYI5H1NDqdaYwZjMYmjFYY": {
+    "blocked_until": 1712345678.9,
+    "failures": 2,
+    "last_failed": 1712345600.0
+  }
+}
+6. Best Practices
+Key Rotation
+
+Maintain at least 3 active keys
+
+Rotate keys quarterly
+
+Failure Handling
+
+Always call update_key_status after API calls
+
+Implement exponential backoff
+
+Security
+
+Add .json files to .gitignore
+
+gitignore
+Copy
+# .gitignore
+*.json
+Monitoring
+
+Regularly check statuses via CLI
+
+Set up alerts for multiple consecutive failures
+
+7. Troubleshooting
+Common Issues
+Issue	Solution
+Keys not saving	Check file permissions
+"No available keys"	1. Add new keys
+2. Check block expiration
+Invalid key format	Ensure 39-character Google API key format
+Error Messages
+Copy
+ERROR - Failed to save keys: Permission denied
+• Run CLI as administrator
+• Check file write permissions
+
+WARNING - Key ...dD4X blocked until...
+• Wait for block expiration
+• Remove and replace key
+8. Advanced Usage
+Environment Variables (Production)
+python
+Copy
+import os
+from api_key_manager import APIKeyManager
+
+# Load from environment
+keys = [os.getenv(f"GEMINI_KEY_{i}") for i in range(1, 4)]
+manager = APIKeyManager(api_keys=keys)
+Automated Testing
+python
+Copy
+def test_api_connection(manager):
+    test_key = manager.get_available_key()
+    if test_key:
+        # Simple API ping
+        genai.configure(api_key=test_key)
+        return genai.list_models() is not None
+    return False
+9. Maintenance
+Key Rotation Script
+python
+Copy
+def rotate_keys(manager, new_keys):
+    manager.api_keys = new_keys
+    manager._save_keys()
+    manager.key_states.clear()
+    manager.save_states()
+Backup Strategy
+bash
+Copy
+# Daily backup
+cp api_keys.json api_keys_$(date +%F).json
+cp api_key_states.json api_key_states_$(date +%F).json
