@@ -55,7 +55,6 @@ from pathlib import Path
 import fitz # PyMuPDF
 from threading import RLock
 from typing import Optional, Tuple
-from concurrent.futures import ThreadPoolExecutor
 import google.generativeai as genai
 from google.api_core import exceptions
 from api_key_manager import APIKeyManager
@@ -359,4 +358,3 @@ if __name__ == "__main__":
             exit(1)
 
     main()
-
