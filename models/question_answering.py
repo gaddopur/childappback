@@ -51,7 +51,8 @@ from threading import RLock
 from typing import Optional, Tuple
 import google.generativeai as genai
 from google.api_core import exceptions
-from api_key_manager import APIKeyManager
+
+from models.api_key_manager import APIKeyManager
 
 # Configure logging
 logger = logging.getLogger(__name__)

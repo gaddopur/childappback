@@ -1,18 +1,19 @@
 import json
 import logging
 import random
-import os
 import time
 from pathlib import Path
 from threading import Lock
+
+from childappback.settings import BASE_DIR
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class APIKeyManager:
     def __init__(self, api_keys=None):  # Correct parameter name
         self.lock = Lock()
-        self.keys_file = Path("api_keys.json")
-        self.state_file = Path("api_key_states.json")
+        self.keys_file = BASE_DIR / Path("models") / "api_keys.json"
+        self.state_file = BASE_DIR / Path("models") / "api_key_states.json"
         self.key_states = {}
         
         # Correct variable name usage

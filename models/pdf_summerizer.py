@@ -55,10 +55,11 @@ from pathlib import Path
 import fitz # PyMuPDF
 from threading import RLock
 from typing import Optional, Tuple
-from concurrent.futures import ThreadPoolExecutor
 import google.generativeai as genai
 from google.api_core import exceptions
-from api_key_manager import APIKeyManager
+
+from childappback import settings
+from models.api_key_manager import APIKeyManager
 
 # Configure logging to output to both a file and the console
 logging.basicConfig(
@@ -269,7 +270,7 @@ class PDFSummarizer:
         :return: Tuple with validation status and reason.
         """
         try:
-            path = Path(pdf_path).resolve()
+            path = Path(settings.MEDIA_ROOT) / pdf_path
 
             # Debugging logs for resolved paths
             logging.debug(f"Resolved input path: {path}")
@@ -305,8 +306,9 @@ class PDFSummarizer:
         :return: Extracted text or None if extraction failed.
         """
         try:
+            path = Path(settings.MEDIA_ROOT) / pdf_path
             text = []
-            with fitz.open(pdf_path) as doc:
+            with fitz.open(path) as doc:
                 for page in doc.pages():
                     text.append(page.get_text())
             full_text = "\n".join(text)

@@ -2,3 +2,4 @@
 childappbackenv/
 .idea/
 **/__pycache__/
+upload/
