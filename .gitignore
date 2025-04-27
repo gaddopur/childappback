@@ -2,3 +2,6 @@
 childappbackenv/
 .idea/
 **/__pycache__/
+upload/
+summary_service.log
+
