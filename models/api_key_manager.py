@@ -5,6 +5,9 @@ import time
 from pathlib import Path
 from threading import Lock
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from childappback.settings import BASE_DIR
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
