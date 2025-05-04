@@ -44,6 +44,7 @@ async def answer_question(question: str):
 """
 
 import os
+import sys
 import asyncio
 import logging
 import time
@@ -52,6 +53,7 @@ from typing import Optional, Tuple
 import google.generativeai as genai
 from google.api_core import exceptions
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from models.api_key_manager import APIKeyManager
 
 # Configure logging
