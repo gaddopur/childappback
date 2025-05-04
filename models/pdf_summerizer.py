@@ -52,12 +52,16 @@ import asyncio
 import logging
 import time
 from pathlib import Path
-import fitz # PyMuPDF
+import pymupdf
 from threading import RLock
 from typing import Optional, Tuple
 import google.generativeai as genai
 from google.api_core import exceptions
 
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from childappback import settings
 from models.api_key_manager import APIKeyManager
 
@@ -66,7 +70,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("summary_service.log"),  # Log file
         logging.StreamHandler()  # Console output
     ]
 )
@@ -308,7 +311,7 @@ class PDFSummarizer:
         try:
             path = Path(settings.MEDIA_ROOT) / pdf_path
             text = []
-            with fitz.open(path) as doc:
+            with pymupdf.open(path) as doc:
                 for page in doc.pages():
                     text.append(page.get_text())
             full_text = "\n".join(text)
