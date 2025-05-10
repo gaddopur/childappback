@@ -59,23 +59,25 @@ class Parent(models.Model):
         return self.user.first_name + ' ' + self.user.last_name
     
 class Child(models.Model):
-    firstName = models.CharField(max_length=255)
-    lastName = models.CharField(max_length=255)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE, related_name='children')
     studyIn = models.PositiveIntegerField()
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.firstName + ' ' + self.firstName
+        return self.user.first_name + ' ' + self.user.last_name
 
 
-# Are 
-
-
-# parent -> pin1
-#       child1 -> pin2
-#       child2 -> pin3
-
-# parent -> pin
-#      child -> pin
+"""
+There will be two ways to create a child:
+1. Create a child by parent account
+- Create a child add email details from parent account
+- Delete the parent
+- Delete the child
+2. Create direct child account
+- Create a child account with email and password
+     - add default parent account details to the child account
+- Link the two accounts together
+- Delete the child account
+"""

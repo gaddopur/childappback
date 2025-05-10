@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, parsers
 from rest_framework.views import APIView
 
-from childappback.settings import BASE_DIR
 from models.pdf_summerizer import PDFSummarizer
 from models.question_answering import QuestionAnswerer
 from .serializers import QuerySerializer, UploadFileSerializer
@@ -69,3 +68,17 @@ class SummarizePdfView(APIView):
         summary = summarizer.summarize(file_path)
         return summary
 
+
+class MathSolver(APIView):
+    def post(self, request):
+        data = request.data
+        expression = data['expression']
+        try:
+            result = self._evaluateExpression(expression)
+            return Response({'result': result}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def _evaluateExpression(expression: str) -> str:
+        return eval(expression)
