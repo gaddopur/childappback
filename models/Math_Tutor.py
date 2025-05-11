@@ -48,21 +48,20 @@ import json
 import uuid
 import argparse
 import aiohttp
-from threading import RLock
 from typing import Optional, List, List, Dict
 import requests
 from ratelimit import limits, sleep_and_retry
 from urllib.parse import urlparse
 from pydantic import BaseModel, Field, field_serializer
-import google.generativeai as genai
 from google.api_core import exceptions
+from google import genai
+from google.genai import types
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from childappback.settings import BASE_DIR
 from models.api_key_manager import APIKeyManager
 
 from model_config_math_tutor import (
-    MODEL_NAME,
     MODEL_CONFIG,
     MATH_PROMPT_TEMPLATE,
     CLASSIFICATION_PROMPT_TEMPLATE
@@ -189,8 +188,6 @@ class MathSolver:
     def __init__(self, api_key_manager: APIKeyManager = None):
         self.api_key_manager = api_key_manager or APIKeyManager()
         self.model_config = MODEL_CONFIG
-        self._lock = RLock()
-        self.model_cache = {}
         self.image_search_config = {
             "google_cse_id": "34de7be9d41754f16",
             "google_api_key": "AIzaSyC_baCQhJhPf_2NicziOTx1bLPDsQg6n4E",
@@ -213,18 +210,32 @@ class MathSolver:
 
             try:
                 logger.debug(f"Attempt {attempt} with key ending ...{api_key[-4:]}")
-                model = self._get_model(api_key)
-                if not model:
+                client = self._get_model(api_key)
+
+                if not client:
                     continue
 
-                logger.info(f"Sending prompt to LLM:\n{prompt}")
-                response = model.generate_content(
-                    prompt, 
-                    request_options={'timeout': 60}
+                generation_config = types.GenerateContentConfig(
+                temperature=self.model_config["generation_config"]["temperature"],
+                top_p=self.model_config["generation_config"]["top_p"],
+                top_k=self.model_config["generation_config"]["top_k"],
+                max_output_tokens=self.model_config["generation_config"]["max_output_tokens"],
                 )
+
+                logger.debug(f"Sending prompt to LLM:\n{prompt}")
+                
+                response = ""
+                for chunk in client.models.generate_content_stream(
+                    model=self.model_config["model"],
+                    contents=[types.Content(role="user", parts=[types.Part.from_text(text=prompt)])],
+                    config=generation_config,
+                ):
+                    if chunk.text:
+                        response += chunk.text
+
                 self.api_key_manager.update_key_status(api_key, success=True)
-                logger.debug("LLM response received successfully")
-                return response.text
+                logger.info("LLM response received successfully")
+                return response
 
             except exceptions.ResourceExhausted as e:
                 logger.warning(f"Rate limit exceeded: {str(e)}")
@@ -247,27 +258,16 @@ class MathSolver:
         logger.info(f"Backing off for {backoff_time} seconds")
         time.sleep(backoff_time)
 
-    def _get_model(self, api_key: str) -> Optional[genai.GenerativeModel]:
+    def _get_model(self, api_key: str):
         """Retrieve or create configured Gemini model."""
         try:
-            if api_key in self.model_cache:
-                logger.debug(f"Using cached model for key ending ...{api_key[-4:]}")
-                return self.model_cache[api_key]
-
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel(
-                model_name=MODEL_NAME,
-                generation_config=self.model_config
-            )
-
-            with self._lock:
-                self.model_cache[api_key] = model
+            client = genai.Client(api_key=api_key)
 
             logger.info(f"Created new model instance for key ending ...{api_key[-4:]}")
-            return model
+            return client
 
         except Exception as e:
-            logger.error(f"Model creation failed: {str(e)}")
+            logger.error(f"Client creation failed: {str(e)}")
             return None
 
     def solve(self, problem: str, max_retries: int = 3) -> Optional[MathSolution]:
