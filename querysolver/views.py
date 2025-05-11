@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -7,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets, parsers
 from rest_framework.views import APIView
 
+from models.Math_Tutor import MathChatbot
 from models.pdf_summerizer import PDFSummarizer
 from models.question_answering import QuestionAnswerer
 from .serializers import QuerySerializer, UploadFileSerializer
@@ -73,6 +75,8 @@ class MathSolver(APIView):
     def post(self, request):
         data = request.data
         expression = data['expression']
+        print(expression)
+        print(type(expression))
         try:
             result = self._evaluateExpression(expression)
             return Response({'result': result}, status=status.HTTP_200_OK)
@@ -80,5 +84,32 @@ class MathSolver(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    def _evaluateExpression(expression: str) -> str:
-        return eval(expression)
+    def _evaluateExpression(self, expression: str) -> str:
+        bot = MathChatbot()
+        response = asyncio.run(bot.chat("new_session_id_1", expression))
+        print(response)
+        return response
+
+""""
+
+{
+"expression": "find all the root of x**2-4x-77"
+}
+"""
+
+"""
+Home page
+
+
+//[
+//  "AIzaSyDrWsM293WR0dAndDmeZY55-bCdS1yYNQs",
+//  "AIzaSyCZMSbCBw0gYLpoJqQzx7_TJ-PJ9pJAzTI",
+//  "AIzaSyDN_5m5C7Tu2-_jJVARWUiBJCHG4jsE5Ns",
+//  "AIzaSyAzSUEVeGNFtBOtLQUTEUoD9ZrJU0fzNzQ",
+//  "AIzaSyBkZNpcVBe0KyeNi5Xgo5LLY1vNJDeQvDo",
+//  "AIzaSyAniT0B7C4ZdVqc7DJLvErHXhpGkCNZPZA",
+//  "AIzaSyCfFOnGjgd-ZXS0VgPQ-wejgWGQTXcMpVw",
+//  "AIzaSyDmG6cUWjZBIdYI5H1NDqdaYwZjMYmjFYY"
+//]
+[
+"""

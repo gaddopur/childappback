@@ -48,7 +48,7 @@ import json
 import uuid
 import argparse
 import aiohttp
-from typing import Optional, List, List, Dict
+from typing import Optional, List, Dict
 import requests
 from ratelimit import limits, sleep_and_retry
 from urllib.parse import urlparse
@@ -61,7 +61,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from childappback.settings import BASE_DIR
 from models.api_key_manager import APIKeyManager
 
-from model_config_math_tutor import (
+from .model_config_math_tutor import (
     MODEL_CONFIG,
     MATH_PROMPT_TEMPLATE,
     CLASSIFICATION_PROMPT_TEMPLATE

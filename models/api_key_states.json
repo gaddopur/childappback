@@ -3,5 +3,20 @@
     "blocked_until": "2025-05-11T20:09:47.314012",
     "failures": 0,
     "last_failed": null
+  },
+  "AIzaSyBuhWsCfje2owCntcZQxfXOX9JPYM3S8T8": {
+    "blocked_until": "2025-05-10T23:03:40.548618",
+    "failures": 1,
+    "last_failed": "2025-05-10T17:03:40.548618"
+  },
+  "AIzaSyDmG6cUWjZBIdYI5H1NDqdaYwZjMYmjFYY": {
+    "blocked_until": "2025-05-11T21:24:51.790394",
+    "failures": 1,
+    "last_failed": "2025-05-11T15:24:51.790394"
+  },
+  "AIzaSyCfFOnGjgd-ZXS0VgPQ-wejgWGQTXcMpVw": {
+    "blocked_until": "2025-05-11T15:25:04.491890",
+    "failures": 0,
+    "last_failed": null
   }
 }
