@@ -3,14 +3,14 @@ Configuration for Math Tutor AI model
 Contains all model-related settings and prompts
 """
 
-MODEL_NAME = "models/gemini-1.5-pro-001"
-
 MODEL_CONFIG = {
-    "temperature": 0.1,
-    "top_p": 0.3,
-    "top_k": 40,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
+    "model": "gemini-2.0-flash-001",
+    "generation_config": {
+        "temperature": 0.1,
+        "top_p": 0.3,
+        "top_k": 40,
+        "max_output_tokens": 8192
+    }
 }
 
 MATH_PROMPT_TEMPLATE = """Solve this mathematics problem for an Indian student. Follow these guidelines:
