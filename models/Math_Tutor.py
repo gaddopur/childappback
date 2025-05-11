@@ -61,7 +61,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from childappback.settings import BASE_DIR
 from models.api_key_manager import APIKeyManager
 
-from model_config_math_tutor import (
+from .model_config_math_tutor import (
     MODEL_NAME,
     MODEL_CONFIG,
     MATH_PROMPT_TEMPLATE,
@@ -648,6 +648,10 @@ class MathChatbot(MathSolver):
         return state
 
     async def chat(self, session_id: str, message: str) -> str:
+        print(session_id)
+        print(message)
+        print(type(message))
+        print(type(session_id))
         if session_id not in self.conversations:
             self.new_conversation(session_id)
 
