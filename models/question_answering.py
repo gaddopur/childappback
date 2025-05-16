@@ -50,7 +50,8 @@ import logging
 import time
 from threading import RLock
 from typing import Optional, Tuple
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from google.api_core import exceptions
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -101,8 +102,7 @@ class QuestionAnswerer:
     
     def __init__(self, api_key_manager: APIKeyManager = None):
         self.api_key_manager = api_key_manager or APIKeyManager()
-        self._lock = RLock()
-        self.model_cache = {}
+        self.model_name = "gemini-2.0-flash-001"
         self.model_config = {
             "temperature": 0,
             "top_p": 0.05,
@@ -112,24 +112,18 @@ class QuestionAnswerer:
         }
         logger.info("QuestionAnswerer initialized")
 
-    def _get_model(self, api_key: str) -> Optional[genai.GenerativeModel]:
-        """Retrieve or create a configured Gemini model."""
+    def _get_client(self, api_key: str):
+        """
+        Retrieve or create a generative model for a given API key.
+        :param api_key: The API key to configure the model.
+        :return: Configured generative model or None if failed.
+        """
         try:
-            if api_key in self.model_cache:
-                logging.debug(f"Model cache hit for ...{api_key[-4:]}")
-                return self.model_cache[api_key]
 
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel(
-                model_name="models/gemini-1.5-pro-001",
-                generation_config=self.model_config
-            )
+            client = genai.Client(api_key=api_key)
 
-            with self._lock:
-                self.model_cache[api_key] = model
-
-            logging.info(f"Model created for ...{api_key[-4:]}")
-            return model
+            logging.info(f"Created new model instance for key ending ...{api_key[-4:]}")
+            return client
 
         except Exception as e:
             logging.error(f"Model creation failed: {str(e)}")
@@ -173,20 +167,37 @@ class QuestionAnswerer:
                 continue
 
             try:
-                model = self._get_model(api_key)
-                if not model:
+                client = self._get_client(api_key)
+                if not client:
                     continue
+
+                generation_model_config = types.GenerateContentConfig(
+                temperature=self.model_config["temperature"],
+                top_p=self.model_config["top_p"],
+                top_k=self.model_config["top_k"],
+                max_output_tokens=self.model_config["max_output_tokens"],
+                )
 
                 prompt = (
                     f"Answer in very simple words for a school kid:\n"
                     f"Question: {question}\nAnswer:"
                 )
+                logging.debug(f"Sending prompt to LLM:\n{prompt}")
+                
 
-                response = model.generate_content(prompt, request_options={'timeout': 30})
+                response = ""
+                for chunk in client.models.generate_content_stream(
+                    model=self.model_name,
+                    contents=[types.Content(role="user", parts=[types.Part.from_text(text=prompt)])],
+                    config=generation_model_config,
+                ):
+                    if chunk.text:
+                        response += chunk.text
+
                 self.api_key_manager.update_key_status(api_key, success=True)
                 
                 logging.info(f"Attempt {attempt} succeeded in {time.time()-attempt_start:.2f}s")
-                return response.text.strip()
+                return response
 
             except exceptions.ResourceExhausted as e:
                 self._handle_error(api_key, f"Rate limit: {str(e)}", attempt, max_retries)
