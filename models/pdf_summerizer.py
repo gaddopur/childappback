@@ -68,7 +68,7 @@ from typing import Optional, Tuple
 from google import genai
 from google.genai import types
 from google.api_core import exceptions
-from model_config_Document_summarizer import (
+from models.model_config_Document_summarizer import (
     MODEL_CONFIG,
     PROMPT_TEMPLATES,
     SUPPORTED_TYPES
