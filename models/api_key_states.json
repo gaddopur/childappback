@@ -10,13 +10,58 @@
     "last_failed": "2025-05-10T17:03:40.548618"
   },
   "AIzaSyDmG6cUWjZBIdYI5H1NDqdaYwZjMYmjFYY": {
-    "blocked_until": "2025-05-11T21:24:51.790394",
-    "failures": 1,
-    "last_failed": "2025-05-11T15:24:51.790394"
+    "blocked_until": "2025-05-25T21:13:16.667786",
+    "failures": 3,
+    "last_failed": "2025-05-25T15:13:16.667786"
   },
   "AIzaSyCfFOnGjgd-ZXS0VgPQ-wejgWGQTXcMpVw": {
-    "blocked_until": "2025-05-11T15:25:04.491890",
+    "blocked_until": "2025-05-25T16:09:52.735052",
     "failures": 0,
     "last_failed": null
+  },
+  "AIzaSyAZv3TM_lEr-7zGRQ-Uc1RGcWdq8PswqjY": {
+    "blocked_until": "2025-05-25T21:08:31.174348",
+    "failures": 2,
+    "last_failed": "2025-05-25T15:08:31.174348"
+  },
+  "AIzaSyBZtI0r-G3-q-g542zUcVHvmpBYOmD93c0": {
+    "blocked_until": "2025-05-25T16:10:13.418677",
+    "failures": 0,
+    "last_failed": null
+  },
+  "AIzaSyAzSUEVeGNFtBOtLQUTEUoD9ZrJU0fzNzQ": {
+    "blocked_until": "2025-05-25T21:07:37.775644",
+    "failures": 2,
+    "last_failed": "2025-05-25T15:07:37.775644"
+  },
+  "AIzaSyCMQSWzaF9jkLcyqsOEoA5pCobSQ4GNwm0": {
+    "blocked_until": "2025-05-25T21:08:29.637821",
+    "failures": 2,
+    "last_failed": "2025-05-25T15:08:29.637821"
+  },
+  "AIzaSyAniT0B7C4ZdVqc7DJLvErHXhpGkCNZPZA": {
+    "blocked_until": "2025-05-25T21:08:28.101873",
+    "failures": 2,
+    "last_failed": "2025-05-25T15:08:28.101873"
+  },
+  "AIzaSyCNkEA0QLeHCdorkLYUZFlFcCBva5bnReI": {
+    "blocked_until": "2025-05-25T21:07:34.752352",
+    "failures": 1,
+    "last_failed": "2025-05-25T15:07:34.752352"
+  },
+  "AIzaSyCZMSbCBw0gYLpoJqQzx7_TJ-PJ9pJAzTI": {
+    "blocked_until": "2025-05-25T21:07:36.287851",
+    "failures": 1,
+    "last_failed": "2025-05-25T15:07:36.287851"
+  },
+  "AIzaSyCGl54M24O_zms5zKUy5jBhCyNY7IOI0h8": {
+    "blocked_until": "2025-05-25T21:13:10.622636",
+    "failures": 1,
+    "last_failed": "2025-05-25T15:13:10.622636"
+  },
+  "AIzaSyDrWsM293WR0dAndDmeZY55-bCdS1yYNQs": {
+    "blocked_until": "2025-05-25T21:13:13.443955",
+    "failures": 1,
+    "last_failed": "2025-05-25T15:13:13.443955"
   }
 }
