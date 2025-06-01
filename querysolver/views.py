@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import random
 import os
 
 from django.conf import settings
@@ -89,6 +90,67 @@ class MathSolver(APIView):
         response = asyncio.run(bot.chat("new_session_id_1", expression))
         print(response)
         return response
+    
+
+class SchoolBookSummaryView(APIView):
+    def get(self, request):
+        # Extract query parameters
+        board = request.query_params.get('board')
+        class_level = request.query_params.get('class')
+        subject = request.query_params.get('subject')
+        book_name = request.query_params.get('book_name')
+        chapter = request.query_params.get('chapter')
+        lang = request.query_params.get('lang')
+
+        # Validate required parameters
+        required_params = [board, class_level, subject, book_name, chapter, lang]
+        if not all(required_params):
+            return Response(
+                {'error': 'Missing required parameters: board, class, subject, book_name, chapter, lang'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Construct directory path
+        chapter_dir = f"Chapter_{int(chapter):02d}"  # Format as Chapter_01, Chapter_02, etc.
+        summary_dir = os.path.join(
+            settings.SCHOOL_BOOKS_SUMMARIES_ROOT,
+            board,
+            f"Class_{class_level}",
+            subject,
+            book_name,
+            chapter_dir,
+            lang
+        )
+
+        # Verify directory exists
+        if not os.path.isdir(summary_dir):
+            return Response(
+                {'error': 'Summary directory not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get random summary file
+        try:
+            summary_files = [f for f in os.listdir(summary_dir) if f.endswith('.md')]
+            if not summary_files:
+                return Response(
+                    {'error': 'No summary files found in directory'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            selected_file = random.choice(summary_files)
+            file_path = os.path.join(summary_dir, selected_file)
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            return Response({'summary': content})
+        
+        except Exception as e:
+            return Response(
+                {'error': f'Error retrieving summary: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 """"
 
